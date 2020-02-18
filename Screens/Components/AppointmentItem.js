@@ -6,7 +6,8 @@ import {
     AsyncStorage,
     Modal,
     TouchableHighlight,
-    Alert
+    Alert,
+    StyleSheet
 } from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -20,10 +21,12 @@ class AppointmentItem extends Component {
             height: '',
             viewHeight: 170,
             modalVisible: false,
+            modalheight: 370,
+            confModal:false,
         }
     }
     setModalVisible(visible) {
-        this.setState({ modalVisible: visible });
+        this.setState({ confModal: visible });
     }
     render() {
         return (
@@ -62,23 +65,7 @@ class AppointmentItem extends Component {
                     flexDirection: "row",
                     width: 300
                 }}>
-                    {/* <Icon
-                        style={{
-                            marginTop: 2
-                        }}
-                        name='times-circle'
-                        size={19}
-                        color='red'
-                        onPress={() => {
-                            // this.props.navigation.navigate('UN_VerifiedDetail', {
-                            //     diseaseId: this.props.item.diseaseId,
-                            // })
-                            var diseaseId = this.props.item.diseaseId;
-                            AsyncStorage.setItem('diseaseId', JSON.stringify(diseaseId), () => {
-                                this.props.navigation.navigate('UN_VerifiedDetail')
-                            })
-                        }}
-                    /> */}
+              
                     <Text style={{
                         color: '#000000',
                         fontWeight: 'bold',
@@ -88,19 +75,7 @@ class AppointmentItem extends Component {
                         alignSelf: 'center',
                         marginStart: 0,
                     }}>Appointment</Text>
-                    {/* <Icon
-                        style={{
-                            marginLeft: 70,
-                            marginTop: 10
-                        }}
-                        name='plus'
-                        size={18}
-                        color='gray'
-                        onPress={() => {
-                            this.props.navigation.navigate('UN_VerifiedDetail')
-                        }}
-                    /> */}
-
+                  
                 </View>
                 <View>
                     <View style={{ flexDirection: 'row' }}>
@@ -120,31 +95,11 @@ class AppointmentItem extends Component {
                             <Text style={{ paddingLeft: 10, color: '#b0a9a9', fontSize: 15 }}>Status :</Text>
                             <Text style={{ paddingLeft: 5, color: this.props.item.AppointmentStatus == 'confirmed' ? 'green' : 'red', fontWeight: 'bold' }}>{this.props.item.AppointmentStatus}</Text>
                         </View>
-
                     </View>
                     <View>
                         <TouchableOpacity
                             onPress={() => {
-                                var docuid = this.props.item.uid;
-                                console.log(docuid)
-                                var ref = firebase.database().ref();
-                                var user = firebase.auth().currentUser;
-                                var uid;
-                                if (user != null) {
-                                    uid = user.uid;
-                                }
-                                ref.child('users').child('Appointments').child(docuid).child(uid).update({ 'status': 'canceled' })
-                                    .then(() => {
-                                        const resetAction = StackActions.reset({
-                                            index: 0,
-                                            actions: [
-                                                // NavigationActions.navigate({ routeName: 'QRCodeScanner' }),
-                                                NavigationActions.navigate({ routeName: 'PatientHome' }),
-                                            ],
-                                        });
-                                        this.props.navigation.dispatch(resetAction);
-                                        // this.setModalVisible(true);
-                                    })
+                                this.setModalVisible(!this.state.confModal);
                             }}
                             style={{
                                 backgroundColor: '#ff7777',
@@ -162,53 +117,183 @@ class AppointmentItem extends Component {
                     </View>
                 </View>
                 <View style={{ marginTop: 22 }}>
-                    <Modal
-                        style={{
-                            justifyContent: 'center',
-                        }}
-                        animationType="slide"
-                        transparent={true}
-                        visible={this.state.modalVisible}
-                        onRequestClose={() => {
-                            // Alert.alert('Modal has been closed.');
-                            this.setModalVisible(!this.state.modalVisible);
-                        }}>
+                <Modal
+                    style={{
+                        justifyContent: 'center',
+                        backgroundColor: 'red'
+                    }}
+                    animationType="fade"
+                    transparent={true}
+                    visible={this.state.confModal}
+                    onRequestClose={() => {
+                        this.setModalVisible(!this.state.confModal);
+                    }}>
+                    <View style={{
+                        backgroundColor: 'rgba(203, 192, 192, 0.8)',
+                        flex: 1,
+                        justifyContent: 'center'
+                    }}>
                         <View style={{
-                            marginTop: '50%',
+                            marginTop: '20%',
                             justifyContent: 'center',
                             alignItems: 'center',
                             backgroundColor: 'white',
-                            height: 400,
+                            height: this.state.modalheight,
                             width: 300,
                             alignSelf: 'center',
-                            borderRadius: 10
+                            borderRadius: 10,
+                            justifyContent: 'center'
                         }}>
                             <View style={{
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                backgroundColor: 'red',
+                                paddingRight: 20,
+                                paddingLeft: 20
                             }}>
-                                <Text>Hello World!</Text>
-
+                                <Text style={{
+                                    fontSize: 20,
+                                    fontWeight: 'bold'
+                                }}>Doctor Detail</Text>
+                                <View style={{
+                                    borderColor: 'black',
+                                    borderWidth: 1,
+                                    width: 120,
+                                    marginBottom: 10
+                                }} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={styles.heading}>Doctor Name</Text>
+                                    <Text style={styles.values}>{this.props.item.name}</Text>
+                                </View>
+                                <View style={styles.hr} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={styles.heading}>Specialization</Text>
+                                    <Text style={styles.values}>{this.props.item.specialization}</Text>
+                                </View>
+                                <View style={styles.hr} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={styles.heading}>Clinical Address</Text>
+                                    <Text style={styles.values}>{this.props.item.clinicalAddress}</Text>
+                                </View>
+                                <View style={styles.hr} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={styles.heading}>Email</Text>
+                                    <Text style={styles.values}>{this.props.item.email}</Text>
+                                </View>
+                                <View style={styles.hr} />
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={styles.heading}>Fee</Text>
+                                    <Text style={styles.values}>{this.props.item.fee}</Text>
+                                </View>
+                                <View style={styles.hr} />
+                              
+                            </View>
+                            <View>
                                 <TouchableHighlight
+                                    style={{
+                                        backgroundColor: this.props.item.AppointmentStatus=='pending' ? '#40E0D0' : 'green',
+                                        height: 35,
+                                        width: 200,
+                                        justifyContent: 'center',
+                                        borderRadius: 4,
+                                        marginTop: 20
+                                    }}
                                     onPress={() => {
-                                        this.setModalVisible(!this.state.modalVisible);
+                                        if (this.props.item.AppointmentStatus=='pending') {
+                                            var docuid = this.props.item.uid;
+                                            console.log(docuid)
+                                            var ref = firebase.database().ref();
+                                            var user = firebase.auth().currentUser;
+                                            var uid;
+                                            if (user != null) {
+                                                uid = user.uid;
+                                            }
+                                            ref.child('users').child('Appointments').child(docuid).child(uid).update({ 'status': 'canceled' })
+                                                .then(() => {
+                                                    this.setModalVisible(!this.state.confModal);
+                                                    const resetAction = StackActions.reset({
+                                                        index: 0,
+                                                        actions: [
+                                                            // NavigationActions.navigate({ routeName: 'QRCodeScanner' }),
+                                                            NavigationActions.navigate({ routeName: 'PatientHome' }),
+                                                        ],
+                                                    });
+                                                    this.props.navigation.dispatch(resetAction);
+                                                    // this.setModalVisible(true);
+                                                })
+                                        }
+                                        else{
+                                            var docuid = this.props.item.uid;
+                                            console.log(docuid)
+                                            var ref = firebase.database().ref();
+                                            var user = firebase.auth().currentUser;
+                                            var uid;
+                                            if (user != null) {
+                                                uid = user.uid;
+                                            }
+                                            ref.child('users').child('Appointments').child(docuid).child(uid).remove()
+                                                .then(() => {
+                                                    this.setModalVisible(!this.state.confModal);
+                                                    const resetAction = StackActions.reset({
+                                                        index: 0,
+                                                        actions: [
+                                                            // NavigationActions.navigate({ routeName: 'QRCodeScanner' }),
+                                                            NavigationActions.navigate({ routeName: 'PatientHome' }),
+                                                        ],
+                                                    });
+                                                    this.props.navigation.dispatch(resetAction);
+                                                    // this.setModalVisible(true);
+                                                })
+                                        }
                                     }}>
-                                    <Text>Hide Modal</Text>
+                                    <Text style={{
+                                        alignSelf: 'center',
+                                        fontWeight: 'bold',
+                                        color: 'white'
+                                    }}>{this.props.item.AppointmentStatus=='pending' ? 'Cancel Appointment' : 'Remove Appointment'}</Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    style={{
+                                        backgroundColor: 'red',
+                                        height: 35,
+                                        width: 200,
+                                        justifyContent: 'center',
+                                        borderRadius: 4,
+                                        marginTop: 10
+                                    }}
+                                    onPress={() => {
+                                        this.setState({
+                                            modalheight: 370,
+                                        })
+                                        this.setModalVisible(!this.state.confModal);
+                                    }}>
+                                    <Text style={{
+                                        alignSelf: 'center',
+                                        fontWeight: 'bold',
+                                        color: 'white',
+                                    }}>{this.state.datevisibility ? 'Cancel' : 'Close'}</Text>
                                 </TouchableHighlight>
                             </View>
                         </View>
-                    </Modal>
-
-                    {/* <TouchableHighlight
-          onPress={() => {
-            this.setModalVisible(true);
-          }}>
-          <Text>Show Modal</Text>
-        </TouchableHighlight> */}
+                    </View>
+                </Modal>
                 </View>
             </View>
         );
     }
 }
+const styles = StyleSheet.create({
+    heading: {
+        color: 'gray',
+        paddingRight: 10,
+    },
+    values: {
+        fontWeight: 'bold'
+    },
+    hr: {
+        borderBottomColor: 'black',
+        borderBottomWidth: .5,
+        width: 220,
+        marginBottom: 10
+    },
+})
 export default withNavigation(AppointmentItem)

@@ -29,7 +29,9 @@ export default class DoctorRegister extends Component {
         uid: 0,
         gender: 'Male',
         date: '',
-        address: 'd'
+        address: 'd',
+        question:'WhatIsyourfavoritebook?',
+        answer:'d'
     }
     componentDidMount() {
 
@@ -170,7 +172,7 @@ export default class DoctorRegister extends Component {
                             <TextInput
                                 ref={passref => this.passref = passref}
                                 keyboardType='default'
-                                placeholder='Password here'
+                                placeholder='Password must be six character'
                                 secureTextEntry={true}
                                 underlineColorAndroid='black'
                                 returnKeyType={'next'}
@@ -214,6 +216,51 @@ export default class DoctorRegister extends Component {
                                     })
                                 }} />
                         </View>
+                        <Text>Choose a Question</Text>
+                        <View style={styles.singleC}>
+                            <Picker
+                                selectedValue={this.state.gender}
+                                style={{ fontWeight: 'bold' }}
+                                onValueChange={(itemValue, itemIndex) =>
+                                    this.setState({ question: itemValue })
+                                }>
+                                <Picker.Item label="What Is your favorite book?" value="WhatIsyourfavoritebook?" />
+                                <Picker.Item label="What is the name of the road you grew up on?" value="What is the name of the road you grew up on?" />
+                                <Picker.Item label="What is your mother's maiden name?" value="What is your mother's maiden name?" />
+                                <Picker.Item label="What was the name of your first/current/favorite pet?" value="What was the name of your first/current/favorite pet?" />
+                                <Picker.Item label="What was the first company that you worked for?" value="What was the first company that you worked for?" />
+                                <Picker.Item label="Where did you meet your spouse?" value="Where did you meet your spouse?" />
+                                <Picker.Item label="Where did you go to high school/college?" value="Where did you go to high school/college?" />
+                                <Picker.Item label="What is your favorite food?" value="What is your favorite food?" />
+                                <Picker.Item label="What city were you born in?" value="What city were you born in?" />
+                                <Picker.Item label="Where is your favorite place to vacation?" value="Where is your favorite place to vacation?" />
+                            </Picker>
+                        </View>
+                        <Text>Answer</Text>
+                        <View style={this.state.name != '' ? styles.singleC : styles.singleCfalse}>
+                            <TextInput
+                                keyboardType='default'
+                                placeholder='Answer here'
+                                underlineColorAndroid='black'
+                                returnKeyType={'next'}
+                                onSubmitEditing={() => {
+                                    // if (this.state.answer != '') {
+                                    //     this.emailref.focus();
+                                    // }
+                                }}
+                                onFocus={() => {
+                                    if (this.state.answer == 'd') {
+                                        this.setState({
+                                            answer: ''
+                                        })
+                                    }
+                                }}
+                                onChangeText={(value) => {
+                                    this.setState({
+                                        answer: value
+                                    })
+                                }} />
+                        </View>
                         <TouchableOpacity
                             onPress={() => {
                                 if (this.state.name == '') {
@@ -228,6 +275,9 @@ export default class DoctorRegister extends Component {
                                 if (this.state.confirmPassword == '') {
                                     return;
                                 }
+                                if (this.state.answer == '') {
+                                    return;
+                                }
                                 if (this.state.password == this.state.confirmPassword) {
                                     firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
                                         .then(() => {
@@ -238,7 +288,9 @@ export default class DoctorRegister extends Component {
                                                 password: this.state.password,
                                                 date: this.state.date,
                                                 gender: this.state.gender,
-                                                address: this.state.address
+                                                address: this.state.address,
+                                                question:this.state.question,
+                                                answer:this.state.answer
                                             })
                                         })
                                         .then(() => {

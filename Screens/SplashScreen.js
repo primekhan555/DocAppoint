@@ -2,11 +2,17 @@ import React from 'react';
 import {
     View,
     Text,
-    AsyncStorage
+    AsyncStorage,
+    ImageBackground,
+    StyleSheet,
+    Dimensions
 } from 'react-native'
 import firebase from 'react-native-firebase'
 
 export default class SplashScreen extends React.Component {
+    static navigationOptions={
+        headerStyle:null
+    }
     componentDidMount() {
         var firebaseConfig = {
             apiKey: "AIzaSyASl8eIzspE9bnPxe8HlaMJdlA3xtz1IS8",
@@ -36,15 +42,34 @@ export default class SplashScreen extends React.Component {
                 })
             }
             else{
-                this.props.navigation.navigate('OptionsScreen')
+                setTimeout(() => {
+                    this.props.navigation.navigate('OptionsScreen')
+                }, 2000);
+               
             }
         })
     }
     render() {
         return (
-            <View>
-                <Text>Splash Screen</Text>
-            </View>
+            <ImageBackground
+            imageStyle={{ opacity: 0.4 }}
+            style={styles.body}
+            source={require('./images/docOptions2.png')}
+             >
+                 <Text style={{
+                     fontWeight:'bold',
+                     alignSelf:'center',
+                    fontSize:20,
+                    color:'#ff6666'
+                 }}>Welcome To The Doctor App</Text>
+                 </ImageBackground>
         )
     }
 }
+const styles =StyleSheet.create({
+    body: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height - 100,
+        justifyContent:'center'
+    },
+})

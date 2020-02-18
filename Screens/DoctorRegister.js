@@ -25,12 +25,14 @@ export default class DoctorRegister extends Component {
         email: 'd',
         password: 'd',
         confirmPassword: 'd',
-        specilization: 'd',
+        specilization: 'HeartSpecialist',
         fee: 'd',
         contact: 4,
         clinicalAddress: 'd',
         uid: 0,
-        city:'',
+        city:'Peshawar',
+        question:'WhatIsyourfavoritebook?',
+        answer:'d'
     }
 
     componentDidMount() {
@@ -146,7 +148,7 @@ export default class DoctorRegister extends Component {
                                         }
                                     }}
                                     keyboardType='default'
-                                    placeholder='Password here'
+                                    placeholder='Must be six character'
                                     secureTextEntry={true}
                                     underlineColorAndroid='black'
                                     onChangeText={(value) => {
@@ -161,7 +163,7 @@ export default class DoctorRegister extends Component {
                                     ref={conPasswordref => this.conPasswordref = conPasswordref}
                                     returnKeyType={'next'}
                                     keyboardType='default'
-                                    placeholder='Confirm password here'
+                                    placeholder='Confirm password'
                                     secureTextEntry={true}
                                     underlineColorAndroid='black'
                                     onFocus={() => {
@@ -185,8 +187,8 @@ export default class DoctorRegister extends Component {
                                     onValueChange={(itemValue, itemIndex) =>
                                         this.setState({ specilization: itemValue })
                                     }>
-                                    <Picker.Item label="Heart Specialist" value="heartSpecialist" />
-                                    <Picker.Item label="Eye Specialist" value="eyeSpecialist" />
+                                    <Picker.Item label="Heart Specialist" value="HeartSpecialist" />
+                                    <Picker.Item label="Eye Specialist" value="EyeSpecialist" />
                                     <Picker.Item label="Neurologist" value="Neurologist" />
                                     <Picker.Item label="Dentist" value="Dentist" />
                                     <Picker.Item label="Gastrologist" value="Gastrologist" />
@@ -263,6 +265,51 @@ export default class DoctorRegister extends Component {
                                         })
                                     }} />
                             </View>
+                            <Text>Choose a Question</Text>
+                        <View style={styles.singleC}>
+                            <Picker
+                                selectedValue={this.state.question}
+                                style={{ fontWeight: 'bold' }}
+                                onValueChange={(itemValue, itemIndex) =>
+                                    this.setState({ question: itemValue })
+                                }>
+                                <Picker.Item label="What Is your favorite book?" value="WhatIsyourfavoritebook?" />
+                                <Picker.Item label="What is the name of the road you grew up on?" value="What is the name of the road you grew up on?" />
+                                <Picker.Item label="What is your mother's maiden name?" value="What is your mother's maiden name?" />
+                                <Picker.Item label="What was the name of your first/current/favorite pet?" value="What was the name of your first/current/favorite pet?" />
+                                <Picker.Item label="What was the first company that you worked for?" value="What was the first company that you worked for?" />
+                                <Picker.Item label="Where did you meet your spouse?" value="Where did you meet your spouse?" />
+                                <Picker.Item label="Where did you go to high school/college?" value="Where did you go to high school/college?" />
+                                <Picker.Item label="What is your favorite food?" value="What is your favorite food?" />
+                                <Picker.Item label="What city were you born in?" value="What city were you born in?" />
+                                <Picker.Item label="Where is your favorite place to vacation?" value="Where is your favorite place to vacation?" />
+                            </Picker>
+                        </View>
+                        <Text>Answer</Text>
+                        <View style={this.state.name != '' ? styles.singleC : styles.singleCfalse}>
+                            <TextInput
+                                keyboardType='default'
+                                placeholder='Answer here'
+                                underlineColorAndroid='black'
+                                returnKeyType={'next'}
+                                onSubmitEditing={() => {
+                                    // if (this.state.answer != '') {
+                                    //     this.emailref.focus();
+                                    // }
+                                }}
+                                onFocus={() => {
+                                    if (this.state.answer == 'd') {
+                                        this.setState({
+                                            answer: ''
+                                        })
+                                    }
+                                }}
+                                onChangeText={(value) => {
+                                    this.setState({
+                                        answer: value
+                                    })
+                                }} />
+                        </View>
                             <TouchableOpacity
                                 onPress={() => {
                                     if (this.state.name == '') {
@@ -290,7 +337,6 @@ export default class DoctorRegister extends Component {
                                         .then(() => {
                                             var curr = firebase.auth().currentUser.uid;
                                             console.log(curr)
-
                                             firebase.database().ref('users').child('Doctors').child(curr).set({
                                                 name: this.state.name,
                                                 email: this.state.email,
@@ -299,14 +345,15 @@ export default class DoctorRegister extends Component {
                                                 fee: this.state.fee,
                                                 contact:this.state.contact,
                                                 city:this.state.city,
-                                                clinicalAddress:this.state.clinicalAddress
+                                                clinicalAddress:this.state.clinicalAddress,
+                                                question:this.state.question,
+                                                answer:this.state.answer,
                                             })
                                             firebase.database().ref().child('DoctorArea').child(this.state.city).child(curr).set({
                                                 docid:curr
                                             })
                                         })
                                         .then(() => {
-                                            
                                             let curr = firebase.auth().currentUser.uid;
                                             AsyncStorage.setItem('uid', curr, () => {
                                                 AsyncStorage.setItem('type', 'doctor', () => {
@@ -320,6 +367,7 @@ export default class DoctorRegister extends Component {
                                         .catch(function (error) {
                                             var errorCode = error.code;
                                             var errorMessage = error.message;
+                                            console.log(errorMessage)
                                         })
                                 }}
                                 style={{

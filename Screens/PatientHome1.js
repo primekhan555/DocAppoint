@@ -7,7 +7,8 @@ import {
     AsyncStorage,
     StyleSheet,
     ActivityIndicator,
-    FlatList
+    FlatList,
+    Picker,
 } from 'react-native';
 import firebase from 'react-native-firebase'
 import DocAreaC from './Components/DocAreaC';
@@ -116,6 +117,7 @@ export default class PatientHome1 extends Component {
         }
         return (
             <View>
+                
                 <View>
                     <FlatList
                         // extraData={this.state}

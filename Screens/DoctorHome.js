@@ -7,15 +7,22 @@ import {
     StyleSheet,
     AsyncStorage,
     FlatList,
+    ImageBackground,
+    Dimensions
 } from 'react-native';
 
 import firebase from 'react-native-firebase';
+import ActionButton from 'react-native-action-button';
 import AppointmentDoc from './Components/AppointmentDoc';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 export default class DoctorHome extends Component {
     state = {
         Loading: true,
         arr: [],
-        refreshing: false
+        refreshing: false,
+        buttonState: true,
+        buttonColor: "green"
     }
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
@@ -67,7 +74,8 @@ export default class DoctorHome extends Component {
                     ref.child('users').child('Appointments').child(uid).on('value', (datasnapshot1) => {
                         if (datasnapshot1.child(k).exists()) {
                             var datasnap = datasnapshot1.child(k);
-                            obj["patientName"] = datasnap.val().patientName;
+                            if (datasnap.val().status != 'canceled' && datasnap.val().status != 'posponded') {
+                                obj["patientName"] = datasnap.val().patientName;
                             obj["AppointmentStatus"] = datasnap.val().status;
                             obj["userEmail"] = datasnap.val().userEmail;
                             obj["userAddress"] = datasnap.val().userAddress;
@@ -80,6 +88,8 @@ export default class DoctorHome extends Component {
                                 arr: newarr,
                                 Loading: false
                             })
+                            }
+                            
                         }
                     })
                 });
@@ -94,9 +104,55 @@ export default class DoctorHome extends Component {
 
         if (this.state.arr.length == 0) {
             return (
+                <ImageBackground
+                imageStyle={{ opacity: 0.4 }}
+                style={styles.body}
+                source={require('./images/docOptions2.png')}>
                 <View style={{}}>
                     <Text style={{ fontSize: 20,alignSelf:'center', paddingTop:50 }}>No Appointment Exist</Text>
                 </View>
+                <ActionButton
+                    style={{
+                        marginEnd: -15,
+                        marginBottom: -20,
+                    }}
+                    degrees={310}
+                    buttonColor={this.state.buttonColor}
+                    onPress={() => {
+                        if (this.state.buttonColor == "red") {
+                            this.setState({
+                                buttonColor: "green",
+                                buttonState: false
+                            })
+                        }
+                        else {
+                            this.setState({
+                                buttonColor: "red",
+                                buttonState: true
+                            })
+                        }
+                    }}>
+                    <ActionButton.Item
+                        size={56}
+                        buttonColor='#fcba03'
+                        title="Posponded Appointment"
+                        onPress={() => this.props.navigation.navigate('PospondedAppoint')}>
+                        <Icon
+                            name="calendar-plus-o"
+                            style={styles.actionButtonIcon} />
+                    </ActionButton.Item>
+                    {/* <ActionButton.Item
+                        buttonColor='#03fc84'
+                        title="Personal Information"
+                        onPress={() => {
+                            this.props.navigation.navigate('PersonalInfo')
+                        }}>
+                        <Icon
+                            name="cog"
+                            style={styles.actionButtonIcon} />
+                    </ActionButton.Item> */}
+                </ActionButton>
+                </ImageBackground>
             )
         }
         if (this.state.Loading) {
@@ -105,6 +161,11 @@ export default class DoctorHome extends Component {
             )
         }
         return (
+            <ImageBackground
+            imageStyle={{ opacity: 0.4 }}
+            style={styles.body}
+            source={require('./images/docOptions2.png')}>
+                <View>
             <FlatList
                 extraData={this.state.arr}
                 data={this.state.arr}
@@ -121,6 +182,50 @@ export default class DoctorHome extends Component {
                 }}
                 keyExtractor={(item, index) => item.toString()}
             />
+            </View>
+            <ActionButton
+                    style={{
+                        marginEnd: -15,
+                        marginBottom: -20,
+                    }}
+                    degrees={310}
+                    buttonColor={this.state.buttonColor}
+                    onPress={() => {
+                        if (this.state.buttonColor == "red") {
+                            this.setState({
+                                buttonColor: "green",
+                                buttonState: false
+                            })
+                        }
+                        else {
+                            this.setState({
+                                buttonColor: "red",
+                                buttonState: true
+                            })
+                        }
+                    }}>
+                    <ActionButton.Item
+                        size={56}
+                        buttonColor='#fcba03'
+                        title="Posponded Appointment"
+                        onPress={() => this.props.navigation.navigate('PospondedAppoint')}>
+                        <Icon
+                            name="calendar-plus-o"
+                            style={styles.actionButtonIcon} />
+                    </ActionButton.Item>
+                </ActionButton>
+            </ImageBackground>
         )
     }
 }
+const styles =StyleSheet.create({
+    actionButtonIcon: {
+        fontSize: 30,
+        height: 30,
+        color: 'black',
+    },
+    body: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height - 100,
+    },
+})

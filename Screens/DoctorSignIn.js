@@ -10,6 +10,7 @@ import {
     ImageBackground,
     StatusBar,
     AsyncStorage,
+    ToastAndroid
 } from 'react-native';
 import firebase from 'react-native-firebase'
 export default class DoctorSignIn extends Component {
@@ -85,8 +86,6 @@ export default class DoctorSignIn extends Component {
                                     password: value
                                 })
                             }} />
-
-
                         <TouchableOpacity
                             onPress={() => {
                                 if (this.state.name == '') {
@@ -106,7 +105,19 @@ export default class DoctorSignIn extends Component {
                                         var curr = firebase.auth().currentUser.uid;
                                         AsyncStorage.setItem('uid', curr, () => {
                                             AsyncStorage.setItem('type', 'doctor', () => {
-                                                this.props.navigation.navigate('DoctorHome');
+                                                firebase.database().ref().child('users').child('Doctors').child(curr).on('value', (datasnapshot) => {
+                                                    if (!datasnapshot.exists()) {
+                                                        ToastAndroid.showWithGravity(
+                                                            'Please Register First',
+                                                            ToastAndroid.SHORT,
+                                                            ToastAndroid.CENTER,
+                                                          );
+                                                    }
+                                                    else{
+                                                        this.props.navigation.navigate('DoctorHome');
+                                                    }
+                                                })
+                                                
                                             })
                                         })
                                     })
@@ -130,6 +141,18 @@ export default class DoctorSignIn extends Component {
                                 fontWeight: 'bold',
                                 fontSize: 17
                             }}>Sign In</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        onPress={()=>{
+                            this.props.navigation.navigate('DForgotPassword')
+                        }}
+                        >
+                        <Text 
+                        style={{
+                            color:'#CBBAF1',
+                            paddingTop:5,
+                        }}
+                        >Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

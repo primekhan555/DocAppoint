@@ -9,7 +9,8 @@ import {
     StatusBar,
     ScrollView,
     ImageBackground,
-    Dimensions
+    Dimensions,
+    ToastAndroid
 } from 'react-native';
 import firebase from 'react-native-firebase'
 export default class PatientSignIn extends Component {
@@ -92,7 +93,18 @@ export default class PatientSignIn extends Component {
                                         console.log(curr);
                                         AsyncStorage.setItem('uid', curr, () => {
                                             AsyncStorage.setItem('type', 'patient', () => {
-                                                this.props.navigation.navigate('PatientHome')
+                                                firebase.database().ref().child('users').child('Patients').child(curr).on('value', (datasnapshot) => {
+                                                    if (!datasnapshot.exists()) {
+                                                        ToastAndroid.showWithGravity(
+                                                            'Please Register First',
+                                                            ToastAndroid.SHORT,
+                                                            ToastAndroid.CENTER,
+                                                          );
+                                                    }
+                                                    else{
+                                                        this.props.navigation.navigate('PatientHome');
+                                                    }
+                                                })
                                             })
                                         })
                                     })
@@ -116,6 +128,18 @@ export default class PatientSignIn extends Component {
                                 fontWeight: 'bold',
                                 fontSize: 17
                             }}>Sign In</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        onPress={()=>{
+                            this.props.navigation.navigate('ForgotPassword')
+                        }}
+                        >
+                        <Text 
+                        style={{
+                            color:'#40E0D0',
+                            paddingTop:5,
+                        }}
+                        >Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

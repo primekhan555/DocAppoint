@@ -101,7 +101,60 @@ export default class PatientHome extends Component {
     }
 
     render() {
-        if (this.state.arr == null) {
+        if (this.state.arr.length==0) {
+            return (
+                <ImageBackground
+                imageStyle={{ opacity: 0.4 }}
+                style={styles.body}
+                source={require('./images/docOptions2.png')}>
+                <View style={{}}>
+                    <Text style={{ fontSize: 20,alignSelf:'center', paddingTop:50 }}>No Appointment Exist</Text>
+                </View>
+                <ActionButton
+                    style={{
+                        marginEnd: -15,
+                        marginBottom: -20,
+                    }}
+                    degrees={310}
+                    buttonColor={this.state.buttonColor}
+                    onPress={() => {
+                        if (this.state.buttonColor == "red") {
+                            this.setState({
+                                buttonColor: "green",
+                                buttonState: false
+                            })
+                        }
+                        else {
+                            this.setState({
+                                buttonColor: "red",
+                                buttonState: true
+                            })
+                        }
+                    }}>
+                    <ActionButton.Item
+                        size={56}
+                        buttonColor='#fcba03'
+                        title="New Appointment"
+                        onPress={() => this.props.navigation.navigate('PatientHome1')}>
+                        <Icon
+                            name="calendar-plus-o"
+                            style={styles.actionButtonIcon} />
+                    </ActionButton.Item>
+                    {/* <ActionButton.Item
+                        buttonColor='#03fc84'
+                        title="Personal Information"
+                        onPress={() => {
+                            this.props.navigation.navigate('PersonalInfo')
+                        }}>
+                        <Icon
+                            name="cog"
+                            style={styles.actionButtonIcon} />
+                    </ActionButton.Item> */}
+                </ActionButton>
+                </ImageBackground>
+            )
+        }
+        if (this.state.isLoading) {
             return (
                 <View>
                 <ActivityIndicator />

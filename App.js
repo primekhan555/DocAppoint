@@ -24,6 +24,9 @@ import BookingScreen from './Screens/BookingScreen';
 import AppointmentDetail from './Screens/AppointmentDetail';
 import SplashScreen from './Screens/SplashScreen';
 import AreaDoctors from './Screens/AreaDoctors';
+import PospondedAppoint from './Screens/PospondedAppoint';
+import ForgotPassword from './Screens/ForgotPassword';
+import DForgotPassword from './Screens/DForgotPassword';
 const App =createStackNavigator({
   SplashScreen:{
     screen:SplashScreen,
@@ -69,6 +72,15 @@ const App =createStackNavigator({
   },
   AreaDoctors:{
     screen:AreaDoctors,
+  },
+  PospondedAppoint:{
+    screen:PospondedAppoint,
+  },
+  ForgotPassword:{
+    screen:ForgotPassword
+  },
+  DForgotPassword:{
+    screen:DForgotPassword,
   }
 })
 export default createAppContainer(App);

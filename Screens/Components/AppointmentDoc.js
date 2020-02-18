@@ -239,6 +239,7 @@ export default class AppointmentDoc extends React.Component {
                                                 let date = this.state.date;
                                                 firebase.database().ref('users').child('Appointments').child(uid).child(pUid).update({
                                                     date: date,
+                                                    status: 'posponded'
                                                 })
                                                     .then(() => {
                                                         // this.setModalVisible(!this.state.confModal);
@@ -295,7 +296,7 @@ export default class AppointmentDoc extends React.Component {
                                             alignSelf: 'center',
                                             fontWeight: 'bold',
                                             color: 'white'
-                                        }}>Cancel</Text>
+                                        }}>Remove</Text>
                                     </TouchableHighlight>
                                 </View>
                                 <TouchableHighlight
